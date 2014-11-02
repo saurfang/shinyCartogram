@@ -11,7 +11,7 @@
     <style type="text/css">
 
       body {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 14px;
         line-height: 1.4em;
         padding: 0;
@@ -109,19 +109,19 @@
         <a href="http://lambert.nico.free.fr/tp/biblio/Dougeniketal1985.pdf">an algoritm to construct continuous area cartograms</a>,
         by James A. Dougenik, Nicholas R. Chrisman and Duane R. Niemeyer,
         &copy;1985 by the Association of American Geographers. This example combines
-        <a href="http://github.com/mbostock/topojson">TopoJSON</a>-encoded 
+        <a href="http://github.com/mbostock/topojson">TopoJSON</a>-encoded
         boundaries of the United States from
         <a href="http://www.naturalearthdata.com/downloads/110m-cultural-vectors/">Natural Earth</a>
         with
         <a href="http://www.embs.com/">Freddie Mac Loan Level Dataset for CQ Program</a>
         to size each state proportionally.</p>
-        
+
         <p>There&rsquo;s also a
         <a class="hashish" href="?segmentized">segmentized topology</a>,
         which distorts the shapes more fluidly than the
         <a class="hashish" href="?">original</a>.</p>
 
-        <p>Designed and built by Forest Fang according to work done 
+        <p>Designed and built by Forest Fang according to work done
         by <a href="http://stamen.com/studio/shawn">Shawn Allen</a> at
         <a href="http://stamen.com">Stamen</a>. But
         <a href="http://d3js.org">d3.js</a> does most of the heavy lifting;
@@ -377,7 +377,7 @@
           .select("title")
             .text(function(d) {
               return [
-                d.properties.NAME, 
+                d.properties.NAME,
                 scaleKey + ": " + scaleFmt(scaleValue(d)),
                 colorKey + ": " + colorFmt(colorValue(d)),
                 ].join("\n");
@@ -428,7 +428,8 @@
 
         if (scaleField.id === "none") {
           yearSelect.attr("disabled", "disabled");
-          reset();
+
+          ();
         } else {
           if (scaleField.years) {
             if (scaleField.years.indexOf(year) === -1) {
