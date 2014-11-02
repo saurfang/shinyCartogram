@@ -121,7 +121,7 @@
       }
     },
     getColumn: function($el, key) {
-      if (!key) return;
+      if (!key || typeof key !== 'string') return;
 
       var columns = $el.data('cartogram-columns');
       var column = {
@@ -152,6 +152,8 @@
         scaleValue = this.getValue(scaleColumn),
         colorColumn = this.getColumn($el, $el.data('cartogram-colorBy')) || scaleColumn,
         colorValue = this.getValue(colorColumn);
+
+      if(scaleColumn === undefined) this.reset($el);
 
       var scaleValues = states.data()
         .map(scaleValue)
