@@ -13,4 +13,10 @@ shinyServer(function(input, output, session) {
   observe({
     map$colorBy(filter(columns, name == input$colorBy, years == input$year)$key)
   })
+
+  observe({
+    choices <- filter(columns, is.na(years) | years == input$year)$name
+    updateSelectInput(session, "scaleBy", choices = choices)
+    updateSelectInput(session, "colorBy", choices = choices)
+  })
 })
