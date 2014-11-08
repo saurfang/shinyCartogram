@@ -1,3 +1,5 @@
+#copied from https://github.com/shawnbot/d3-cartogram/blob/master/data/Makefile
+
 OGR ?= ogr2ogr -F GeoJSON
 TOPOJSON ?= topojson --id-property name
 SIMPLIFY ?= 24
