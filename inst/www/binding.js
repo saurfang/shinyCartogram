@@ -172,18 +172,30 @@
         .map(colorValue)
         .filter(function(n) {
           return isFinite(n);
-        })
-        .sort(d3.ascending),
-        lo = colorValues[0],
-        hi = colorValues[colorValues.length - 1];
+        }),
+        lo = d3.min(colorValues),
+        hi = d3.max(colorValues);
 
       if(scaleValues.length * colorValues.length === 0) {
         return this.reset($el);
       }
 
+      //Support one/two/three colors scale
+      var colorRange = $el.data('colors');
+      if(typeof colorRange === 'string') {
+        colorRange = ['white', colorRange];
+      } else if(colorRange.length > 3) {
+        colorRange = colorRange.slice(0, 3);
+      }
+      //Determine domain based on number of colors
+      var colorDomain = [lo, hi];
+      if(colorRange.length === 3) {
+        colorDomain = lo < 0 ? [lo, 0, hi] : [lo, d3.mean(colorValues), hi];
+      }
+
       var color = d3.scale.linear()
-        .range($el.data('colors'))
-        .domain(lo < 0 ? [lo, 0, hi] : [lo, d3.mean(colorValues), hi]);
+        .range(colorRange)
+        .domain(colorDomain);
 
       // normalize the scale to positive numbers
       var scale = d3.scale.linear()
