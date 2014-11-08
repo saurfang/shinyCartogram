@@ -7,6 +7,12 @@ a reusable [Shiny](http://rstudio.com/shiny) component.
 The concept and R Shiny binding implementation borrows heavily from 
 [leaflet-shiny](https://github.com/jcheng5/leaflet-shiny).
 
+You can install the latest development version from github with
+```R
+#install.packages("devtools")
+devtools::install_github("saurfang/shinyCartogram")
+```
+
 [cartogram.js](https://github.com/shawnbot/d3-cartogram/blob/master/cartogram.js) is a JavaScript
 implementation of [an algoritm to construct continuous area cartograms](http://lambert.nico.free.fr/tp/biblio/Dougeniketal1985.pdf),
 by James A. Dougenik, Nicholas R. Chrisman and Duane R. Niemeyer, &copy;1985 
