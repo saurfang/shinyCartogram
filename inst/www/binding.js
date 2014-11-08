@@ -17,22 +17,31 @@
         maps[id] = $el;
 
         var svg = d3.select('#' + id + ' svg'),
+          view = $el.data('cartogram-view'),
           zoom = d3.behavior.zoom()
-          .translate([-38, 32])
-          .scale(0.94)
-          .scaleExtent([0.5, 10.0])
-          .on("zoom", updateZoom),
-          layer = svg.append("g"),
-          states = layer.append("g")
-          .selectAll("path");
+            .translate([view[0], view[1]])
+            .scale(view[2])
+            .scaleExtent([0.5, 10.0])
+            .on("zoom", updateZoom),
+          zoomPane = svg.append("g");
 
+        //Add rect so zoom can be activated in empty space
+        //zoomPane.append('rect')
+        //    .attr('class', 'overlay')
+        //    .attr('width', '100%')
+        //    .attr('height', '100%');
+
+        //Add layer for zoom to apply so empty rect doesn't move with it
+        var layer = zoomPane.append("g"),
+          states = layer.selectAll("path");
+
+        zoomPane.call(zoom);
         updateZoom();
 
         function updateZoom() {
-          var scale = zoom.scale();
           layer.attr("transform",
             "translate(" + zoom.translate() + ") " +
-            "scale(" + [scale, scale] + ")");
+            "scale(" + zoom.scale() + ")");
         }
 
         var proj = d3.geo.albersUsa(),
@@ -48,7 +57,11 @@
             return +d.properties.scale;
           });
 
-        $el.data('cartogram-map', {});
+        $el.data('cartogram-map', {
+          states: states,
+          zoom: zoom,
+          carto: carto
+        });
 
         d3.json($el.data('topojson'), function(topo) {
           topology = topo;
@@ -78,6 +91,8 @@
             carto: carto,
             proj: proj
           });
+
+          this.reset($el);
         });
       }
     },
@@ -126,7 +141,7 @@
       var column = {
         name: key
       };
-      if (columns.hasOwnProperty(key)) {
+      if (columns !== undefined && columns.hasOwnProperty(key)) {
         column = columns[key];
       }
       column.format = this.getFormat(column.format);
@@ -145,7 +160,7 @@
         proj = map.proj,
         states = map.states;
 
-      if(states === undefined) return;
+      if(topology === undefined || geometries === undefined) return;
 
       var scaleColumn = this.getColumn($el, $el.data('cartogram-scaleBy')),
         scaleValue = this.getValue(scaleColumn),
@@ -190,7 +205,7 @@
       //Determine domain based on number of colors
       var colorDomain = [lo, hi];
       if(colorRange.length === 3) {
-        colorDomain = lo < 0 ? [lo, 0, hi] : [lo, d3.mean(colorValues), hi];
+        colorDomain = lo * hi < 0 ? [lo, 0, hi] : [lo, d3.mean(colorValues), hi];
       }
 
       var color = d3.scale.linear()
@@ -250,10 +265,15 @@
 
   var methods = {};
 
-  methods.setView = function(lat, lng, zoom, forceReset) {
-    this.data('cartogram-map').zoom.translate([lat, lng]).scale(zoom);
-    if (forceRest) {
-      cartogramBinding.reset(this);
+  methods.setView = function(x, y, scale, forceReset) {
+    this.data('cartogram-view', [x, y, scale]);
+    var zoom = this.data('cartogram-map').zoom;
+    if(zoom !== undefined) {
+      zoom.translate([x, y]).scale(scale).event(this);
+
+      if (forceReset) {
+        cartogramBinding.reset(this);
+      }
     }
   };
 
@@ -280,7 +300,7 @@
     updateAttribute(this, nestRollup(data), 'data');
   };
 
-  methods.defineColumns = function(data) {
+  methods.setColumns = function(data) {
     updateAttribute(this, nestRollup(data), 'columns');
   };
 

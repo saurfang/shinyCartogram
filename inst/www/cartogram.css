@@ -15,3 +15,8 @@ path.state {
 path.state:hover {
   stroke: #000;
 }
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
