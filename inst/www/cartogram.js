@@ -1,6 +1,8 @@
 (function(exports) {
 
   /*
+   * Code copied from: https://github.com/shawnbot/d3-cartogram/blob/master/cartogram.js
+   *
    * d3.cartogram is a d3-friendly implementation of An Algorithm to Construct
    * Continuous Area Cartograms:
    *

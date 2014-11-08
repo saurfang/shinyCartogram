@@ -1,0 +1,16 @@
+Package: shinyCartogram
+Title: Cartogram map component for Shiny, using d3-cartogram
+Version: 0.1
+Authors@R: "Forest Fang <forest.fang@outlook.com> [aut, cre]"
+Description: cartogram.js is a JavaScript implementation of an algoritm
+    to construct continuous area cartograms. This package provides a easy and
+    reusable cartogram component in your Shiny applications.
+Depends:
+    R (>= 3.0.0)
+License: MIT + file LICENSE
+LazyData: true
+Imports:
+    htmltools,
+    jsonlite,
+    RColorBrewer,
+    shiny

@@ -6,7 +6,7 @@ shinyUI(fixedPage(
   flowLayout(
     selectInput("scaleBy", "Scale by", columnChoices),
     selectInput("colorBy", "Color by", columnChoices),
-    selectInput("year", "in", c(2010, 2011))
+    selectInput("year", "in", 2010:2013)
   ),
 
   cartogramOutput("cartogram"),
