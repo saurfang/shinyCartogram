@@ -63,7 +63,6 @@
             .append("path")
             .attr("class", "state")
             .attr("id", function(d) {
-              //return d.properties.NAME;
               return d.id;
             })
             .attr("fill", "#fafafa")
@@ -153,14 +152,22 @@
         colorColumn = this.getColumn($el, $el.data('cartogram-colorBy')) || scaleColumn,
         colorValue = this.getValue(colorColumn);
 
-      if(scaleColumn === undefined) this.reset($el);
+      if(scaleColumn === undefined) {
+        if(colorColumn === undefined) {
+          return this.reset($el);
+        }
+
+        scaleValue = function(d) { return 1; };
+        carto.iterations(0);
+      } else {
+        carto.iterations(8);
+      }
 
       var scaleValues = states.data()
         .map(scaleValue)
         .filter(function(n) {
           return isFinite(n);
-        })
-        .sort(d3.ascending),
+        }),
         colorValues = states.data()
         .map(colorValue)
         .filter(function(n) {
@@ -180,7 +187,7 @@
 
       // normalize the scale to positive numbers
       var scale = d3.scale.linear()
-        .domain([scaleValues[0], scaleValues[scaleValues.length - 1]])
+        .domain([d3.min(scaleValues), d3.max(scaleValues)])
         .range([1, 1000]);
 
       // tell the cartogram to use the scaled values
@@ -195,14 +202,14 @@
       states.data(features)
         .select("title")
         .text(function(d) {
-           var arr = [
-              d.properties.name,
-              scaleColumn.title + ": " + scaleColumn.format(scaleValue(d))
-            ];
-          if(scaleColumn !== colorColumn) {
-            arr.push(colorColumn.title + ": " + scaleColumn.format(colorValue(d)));
-          }
-          return arr.join("\n");
+           var arr = [ d.properties.name ];
+           if(scaleColumn !== undefined) {
+             arr.push(scaleColumn.title + ": " + scaleColumn.format(scaleValue(d)));
+           }
+           if(scaleColumn !== colorColumn) {
+             arr.push(colorColumn.title + ": " + colorColumn.format(colorValue(d)));
+           }
+           return arr.join("\n");
         });
 
       states.transition()
