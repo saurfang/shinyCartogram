@@ -1,0 +1,163 @@
+---
+title: "Introduction to shinyCartogram"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to shinyCartogram}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+This R package wraps [d3-cartogram](https://github.com/shawnbot/d3-cartogram) in
+a reusable [Shiny](http://rstudio.com/shiny) component. 
+The concept and R Shiny binding implementation borrows heavily from 
+[leaflet-shiny](https://github.com/jcheng5/leaflet-shiny).
+
+[cartogram.js](https://github.com/shawnbot/d3-cartogram/blob/master/cartogram.js) is a JavaScript
+implementation of [an algoritm to construct continuous area cartograms](http://lambert.nico.free.fr/tp/biblio/Dougeniketal1985.pdf),
+by James A. Dougenik, Nicholas R. Chrisman and Duane R. Niemeyer, &copy;1985 
+by the Association of American Geographers.
+
+This [example](https://saurfang.shinyapps.io/shinyCartogram/) replicates the original demo that
+[Shawn Allen](http://stamen.com/studio/shawn) made for his [d3-cartogram](https://github.com/shawnbot/d3-cartogram).
+This R package has made it possible for you to only focus on providing the dataset and column definitions
+rather than writing boilerplate codes that creates the map and associated visual updates.
+
+# Functions
+
+Use the two functions `cartogramOutput()` and `createCartogram()` from your Shiny
+app to create cartogram maps.
+
+```r
+# in ui.R
+cartogramOutput(outputId, width = "100%", height = "500px",
+                translateX = 0, translateY = 0, scale = 1,
+                topojson = "cartogram/data/us-states-segmentized.topojson",
+                colors = rev(brewer.pal(3, "RdYlBu")))
+
+# in server.R
+createCartogram(session, outputId)
+```
+
+## TopoJSON
+[TopoJSON](https://github.com/mbostock/topojson) is an extension of GeoJSON that encodes topology.
+We use TopoJSON here to define boundaries of geographic regions and their names.
+You can find built-in *.topojson* files at `system.file("www/data", package = "shinyCartogram")`.
+There is also a Makefile that helps you convert *.geojson* files into *.topojson*.
+
+## Projections
+Currently we use [albersUsa](http://bl.ocks.org/mbostock/4090848) as default map projection.
+
+**TODO**: We intend to open up API to customize/update map projections. This allows you
+to arrange tiles in different ways. If you have such need, please let me know so we
+can better understand the best way to expose this ability.
+
+## Colors
+Color string^[https://github.com/mbostock/d3/wiki/Colors] can be:
+
+- rgb hexadecimal - "#ffeeaa"
+- rgb shorthand hexadecimal - "#fea"
+- named - "red", "white", "blue"
+
+You can pass in:
+
+- Single color to which maximum value will be associated. Minimum value will map to white.
+- Two colors which correspond to minimum and maximum.
+- Three colors where mid-point is either zero if possible or the arithmetic mean.
+
+# Methods
+
+The following are methods that can be called on the map object that is created
+using `createCartogram()`. For example:
+
+```r
+map <- createCartogram(session, "myMap")
+map$setView(0, 0, 1.5)
+```
+
+Below is a list of currently available methods:
+
+```{r echo=FALSE, comment=''}
+library(shinyCartogram)
+res <- capture.output(str(unclass(createCartogram(list(output = list()), 'foo'))))
+cat(gsub(':function ', '', res[-1]), sep = '\n')
+```
+
+Detailed documentation for all methods:
+
+## setView()
+
+```r
+setView(x, y, scale, forceReset = FALSE)
+```
+
+Sets the transalte offsets and zoom level of the map. `forceReset` will completely reset
+the map view.
+
+## setData()
+
+```r
+setData(data)
+```
+
+Sets the underlying dataset that cartogram reads scale and color variable from. 
+`data` needs to be a data.frame and must contains a `name` column, 
+which will be used to join with map tile ids. (e.g. state names)
+
+## setColumns()
+
+```r
+setColumns(columns)
+```
+
+Sets the column definitions. `columns` needs to be a data.frame and must at least
+contain `name` column and can have optional `title` and `format` column which define
+the title and format used in tooltip.
+
+`columns` are not mandatory and if not supplied `title` will defaults to column name
+and no number format will be applied.
+
+### Number Format
+Number format must be character vector and can either contain
+
+- A Javascript function that takes in a numeric value and output a string
+- A format string for [d3.format](https://github.com/mbostock/d3/wiki/Formatting)
+
+## scaleBy()
+
+```r
+scaleBy(column)
+```
+
+Sets the column used to scale area. 
+
+If no scale column exists but a valid color column is selected, then original tile
+area size is preserved. In this case, this is equivalent to a choropleth map.
+
+## colorBy()
+
+```r
+colorBy(column)
+```
+
+Sets the column used to scale color used to fill area.
+
+If no color column exists but a valid scale column is selected, then that scale column
+will also be used to color map tile using its values.
+
+# Events
+
+TODO: We plan to add click and hover events for map tiles
+
+# Data Sources
+
+Population data is from US Census Bureau:
+
+- http://www.census.gov/popest/data/state/totals/2013
+- http://www.census.gov/popest/data/national/totals/2013/files/NST_EST2013_ALLDATA.csv
+
+Location data is from Natural Earth:
+
+- http://www.naturalearthdata.com/downloads/110m-cultural-vectors/
+- http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_1_states_provinces_lakes.zip
+- http://vallandingham.me/shapefile_to_geojson.html

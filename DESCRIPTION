@@ -14,3 +14,6 @@ Imports:
     jsonlite,
     RColorBrewer,
     shiny
+Suggests:
+    knitr
+VignetteBuilder: knitr
