@@ -73,9 +73,9 @@
           totalValue = d3.sum(values);
 
       // no iterations; just return the features
-      if (iterations <= 0) {
-        return objects;
-      }
+      //if (iterations <= 0) {
+      //  return objects;
+      //}
 
      var i = 0;
       while (i++ < iterations) {
