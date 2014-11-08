@@ -13,7 +13,7 @@ shinyUI(fixedPage(
 
   HTML('<div id="about">
        <h2>About</h2>
-       <p><a href="cartogram.js">cartogram.js</a> is a JavaScript implementation of
+       <p><a href="https://github.com/shawnbot/d3-cartogram/blob/master/cartogram.js">cartogram.js</a> is a JavaScript implementation of
        <a href="http://lambert.nico.free.fr/tp/biblio/Dougeniketal1985.pdf">an algoritm to construct continuous area cartograms</a>,
        by James A. Dougenik, Nicholas R. Chrisman and Duane R. Niemeyer,
        &copy;1985 by the Association of American Geographers. This example combines

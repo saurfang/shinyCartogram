@@ -4,6 +4,7 @@
 \title{Create a \code{svg} element for a Cartogram}
 \usage{
 cartogramOutput(outputId, width = "100\%", height = "500px",
+  translateX = 0, translateY = 0, scale = 1,
   topojson = "cartogram/data/us-states-segmentized.topojson",
   colors = rev(brewer.pal(3, "RdYlBu")))
 }
@@ -14,12 +15,17 @@ cartogramOutput(outputId, width = "100\%", height = "500px",
 CSS length (e.g. \code{400px} or \code{50\%}) or a numeric value which will
 be interpreted as pixels.}
 
+\item{translateX,translateY}{The x and y offset of the map in pixels.}
+
+\item{scale}{The scale of the map which affects initial height and width of your map.}
+
 \item{topojson}{The URL for the topojson which encodes the map topology such
 as boundaries and names. (the us states are used by default). See
 \url{https://github.com/mbostock/topojson/wiki} for information about
 where to find other maps or creating your own map.}
 
-\item{colors}{The}
+\item{colors}{The list of colors to use when filling map tiles.
+See the package vignette \code{vignette('intro', 'shinyCartogram')} for details.}
 }
 \value{
 An HTML tag list.

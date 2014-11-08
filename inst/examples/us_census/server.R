@@ -4,7 +4,7 @@ shinyServer(function(input, output, session) {
   map <- createCartogram(session, "cartogram")
   session$onFlushed(once = TRUE, function() {
     map$setData(rename(nst2013, name = NAME))
-    map$defineColumns(select(columns, title = name, name = key, format))
+    map$setColumns(select(columns, title = name, name = key, format))
   })
 
   #Update scale variable

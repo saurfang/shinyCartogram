@@ -7,7 +7,7 @@
 #' @param outputId The string identifier that was passed to the corresponding
 #'   \code{\link{cartogramOutput}()}.
 #' @return A list of methods. See the package vignette \code{vignette('intro',
-#'   'cartogram'} for details.
+#'   'shinyCartogram')} for details.
 #' @importFrom shiny renderText
 #' @export
 createCartogram <- function(session, outputId) {
@@ -67,9 +67,9 @@ createCartogram <- function(session, outputId) {
   }
 
   obj <- lapply(expression(
-    setView(lat, lng, zoom, forceReset = FALSE),
+    setView(x, y, scale, forceReset = FALSE),
     setData(data),
-    defineColumns(columns),
+    setColumns(columns),
     scaleBy(column),
     colorBy(column)
   ), stub)
@@ -85,11 +85,14 @@ createCartogram <- function(session, outputId) {
 #' @param width,height The width and height of the map. They can either take a
 #'   CSS length (e.g. \code{400px} or \code{50\%}) or a numeric value which will
 #'   be interpreted as pixels.
+#' @param translateX,translateY The x and y offset of the map in pixels.
+#' @param scale The scale of the map which affects initial height and width of your map.
 #' @param topojson The URL for the topojson which encodes the map topology such
 #'   as boundaries and names. (the us states are used by default). See
 #'   \url{https://github.com/mbostock/topojson/wiki} for information about
 #'   where to find other maps or creating your own map.
-#' @param colors The
+#' @param colors The list of colors to use when filling map tiles.
+#'   See the package vignette \code{vignette('intro', 'shinyCartogram')} for details.
 #' @return An HTML tag list.
 #' @importFrom shiny addResourcePath
 #' @importFrom htmltools htmlDependency attachDependencies tagList singleton tags tag validateCssUnit
@@ -97,6 +100,7 @@ createCartogram <- function(session, outputId) {
 #' @importFrom RColorBrewer brewer.pal
 #' @export
 cartogramOutput <- function(outputId, width = "100%", height = "500px",
+                            translateX = 0, translateY = 0, scale = 1,
                             topojson = "cartogram/data/us-states-segmentized.topojson",
                             colors = rev(brewer.pal(3, "RdYlBu"))) {
   addResourcePath("cartogram", system.file("www", package="shinyCartogram"))
@@ -119,7 +123,8 @@ cartogramOutput <- function(outputId, width = "100%", height = "500px",
                style = paste("width:", validateCssUnit(width), ";", "height:", validateCssUnit(height)),
                tag("svg", c(class = "cartogram-map")),
                `data-topojson` = topojson,
-               `data-colors` = toJSON(colors))
+               `data-colors` = toJSON(colors),
+               `data-cartogram-view` = toJSON(c(translateX, translateY, scale)))
     ),
     list(d3Dep, topojsonDep)
   )

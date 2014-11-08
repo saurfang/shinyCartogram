@@ -14,7 +14,7 @@ createCartogram(session, outputId)
 }
 \value{
 A list of methods. See the package vignette \code{vignette('intro',
-  'cartogram'} for details.
+  'shinyCartogram')} for details.
 }
 \description{
 This function is called from \file{server.R} and returns an object that can
