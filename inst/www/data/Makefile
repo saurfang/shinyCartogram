@@ -1,5 +1,5 @@
 OGR ?= ogr2ogr -F GeoJSON
-TOPOJSON ?= ../../topojson/bin/topojson --id-property name
+TOPOJSON ?= topojson --id-property name
 SIMPLIFY ?= 24
 
 all: \
