@@ -5,7 +5,7 @@
 \usage{
 cartogramOutput(outputId, width = "100\%", height = "500px",
   topojson = "cartogram/data/us-states-segmentized.topojson",
-  colors = brewer.pal(3, "RdYlBu"))
+  colors = rev(brewer.pal(3, "RdYlBu")))
 }
 \arguments{
 \item{outputId}{the id of the \samp{<svg>} element}

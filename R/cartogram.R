@@ -98,7 +98,7 @@ createCartogram <- function(session, outputId) {
 #' @export
 cartogramOutput <- function(outputId, width = "100%", height = "500px",
                             topojson = "cartogram/data/us-states-segmentized.topojson",
-                            colors = brewer.pal(3, "RdYlBu")) {
+                            colors = rev(brewer.pal(3, "RdYlBu"))) {
   addResourcePath("cartogram", system.file("www", package="shinyCartogram"))
 
   d3Dep <- htmlDependency("d3", "3.4.13", c(href = "//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/"),
