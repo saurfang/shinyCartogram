@@ -20,7 +20,13 @@ shinyServer(function(input, output, session) {
   #Update choices based on year selected
   observe({
     choices <- filter(columns, is.na(years) | years == input$year)$name
-    updateSelectInput(session, "scaleBy", choices = choices)
-    updateSelectInput(session, "colorBy", choices = choices)
+
+    update <- function(val) {
+      value <- intersect(isolate(input[[val]]), choices)
+      updateSelectInput(session, val, NULL, choices, if(length(value) == 1) value)
+    }
+
+    update("scaleBy")
+    update("colorBy")
   })
 })

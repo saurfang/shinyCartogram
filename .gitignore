@@ -9,3 +9,5 @@
 .Rproj.user/
 .Rproj.user
 inst/doc
+
+inst/examples/us_census/shinyapps/saurfang/shinyCartogram.dcf
