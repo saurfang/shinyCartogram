@@ -7,6 +7,12 @@ shinyServer(function(input, output, session) {
     map$setColumns(select(columns, title = name, name = key, format))
   })
 
+  #Update dataset
+  observe({
+    set.seed(1138)
+    map$setData(rename(nst2013, name = NAME) %>% sample_frac(input$frac))
+  })
+
   #Update scale variable
   observe({
     map$scaleBy(filter(columns, name == input$scaleBy, years == input$year)$key)

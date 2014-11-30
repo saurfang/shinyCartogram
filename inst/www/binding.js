@@ -4,7 +4,7 @@
   var cartogramBinding = new Shiny.OutputBinding();
   $.extend(cartogramBinding, {
     find: function(scope) {
-      return $(scope).find(".cartogram-map-output");
+      return $(scope).find('.cartogram-map-output');
     },
     renderValue: function(el, data) {
       var $el = $(el);
@@ -22,8 +22,8 @@
             .translate([view[0], view[1]])
             .scale(view[2])
             .scaleExtent([0.5, 10.0])
-            .on("zoom", updateZoom),
-          zoomPane = svg.append("g");
+            .on('zoom', updateZoom),
+          zoomPane = svg.append('g');
 
         //Add rect so zoom can be activated in empty space
         //zoomPane.append('rect')
@@ -32,16 +32,16 @@
         //    .attr('height', '100%');
 
         //Add layer for zoom to apply so empty rect doesn't move with it
-        var layer = zoomPane.append("g"),
-          states = layer.selectAll("path");
+        var layer = zoomPane.append('g'),
+          states = layer.selectAll('path');
 
         zoomPane.call(zoom);
         updateZoom();
 
         function updateZoom() {
-          layer.attr("transform",
-            "translate(" + zoom.translate() + ") " +
-            "scale(" + zoom.scale() + ")");
+          layer.attr('transform',
+            'translate(' + zoom.translate() + ') ' +
+            'scale(' + zoom.scale() + ')');
         }
 
         var proj = d3.geo.albersUsa(),
@@ -73,15 +73,15 @@
 
           states = states.data(features)
             .enter()
-            .append("path")
-            .attr("class", "state")
-            .attr("id", function(d) {
+            .append('path')
+            .attr('class', 'state')
+            .attr('id', function(d) {
               return d.id;
             })
-            .attr("fill", "#fafafa")
-            .attr("d", path);
+            .attr('fill', '#fafafa')
+            .attr('d', path);
 
-          states.append("title");
+          states.append('title');
 
           $el.data('cartogram-map', {
             topology: topology,
@@ -91,8 +91,6 @@
             carto: carto,
             proj: proj
           });
-
-          this.reset($el);
         });
       }
     },
@@ -113,13 +111,13 @@
       states.data(features)
         .transition()
         .duration(750)
-        .ease("linear")
-        .attr("fill", "#fafafa")
-        .attr("d", path);
+        .ease('linear')
+        .attr('fill', '#fafafa')
+        .attr('d', path);
 
-      states.select("title")
+      states.select('title')
         .text(function(d) {
-          return d.properties.name;
+          return d.id;
         });
     },
     getFormat: function(format) {
@@ -129,7 +127,7 @@
 
       var f = eval('f = ' + format);
       if (typeof f !== 'function') {
-        return d3.format(f || ",");
+        return d3.format(f || ',');
       } else {
         return f;
       }
@@ -149,8 +147,12 @@
     },
     getValue: function(column) {
       return function(d) {
-        return +d.properties[column.name];
-      };
+        try {
+          return +d.properties[column.name];
+        } catch (e) {
+          //return NaN;
+        };
+      }
     },
     update: function($el) {
       var map = $el.data('cartogram-map');
@@ -219,7 +221,8 @@
 
       // tell the cartogram to use the scaled values
       carto.value(function(d) {
-        return scale(scaleValue(d));
+        var val = scaleValue(d);
+        return isFinite(val) ? scale(val) : 1;
       });
 
       // generate the new features, pre-projected
@@ -227,28 +230,29 @@
 
       // update the data
       states.data(features)
-        .select("title")
+        .select('title')
         .text(function(d) {
-           var arr = [ d.properties.name ];
+           var arr = [ d.id ];
            if(scaleColumn !== undefined) {
-             arr.push(scaleColumn.title + ": " + scaleColumn.format(scaleValue(d)));
+             arr.push(scaleColumn.title + ': ' + scaleColumn.format(scaleValue(d)));
            }
            if(scaleColumn !== colorColumn) {
-             arr.push(colorColumn.title + ": " + colorColumn.format(colorValue(d)));
+             arr.push(colorColumn.title + ': ' + colorColumn.format(colorValue(d)));
            }
-           return arr.join("\n");
+           return arr.join('\n');
         });
 
       states.transition()
         .duration(750)
-        .ease("linear")
-        .attr("fill", function(d) {
-          return color(colorValue(d));
+        .ease('linear')
+        .attr('fill', function(d) {
+          var val = colorValue(d);
+          return isFinite(val) ? color(val) : '#fafafa';
         })
-        .attr("d", carto.path);
+        .attr('d', carto.path);
     }
   });
-  Shiny.outputBindings.register(cartogramBinding, "cartogram-output-binding");
+  Shiny.outputBindings.register(cartogramBinding, 'cartogram-output-binding');
 
   Shiny.addCustomMessageHandler('cartogram', function(data) {
     var mapId = data.mapId;
@@ -292,7 +296,9 @@
     },
     updateAttribute = function($el, data, attribute) {
       $el.data('cartogram-' + attribute, data);
-      if(attribute === 'data') cartogramBinding.reset($el);
+      if(attribute === 'data') {
+        cartogramBinding.reset($el);
+      }
       cartogramBinding.update($el);
     };
 
