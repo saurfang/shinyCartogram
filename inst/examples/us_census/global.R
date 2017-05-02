@@ -38,7 +38,7 @@ columns <- lapply(fields, function(field){
     }
     data.frame(field, stringsAsFactors = FALSE)
   }) %>%
-  rbind_all %>%
+  bind_rows %>%
   mutate(key = mapply(function(key, year) {
     if(!is.na(year)) {
       gsub("%d", year, key)
